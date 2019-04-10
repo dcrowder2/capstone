@@ -107,12 +107,20 @@ if __name__ == '__main__':
 		train_plots.append(temp)
 		test_plots.append(accuracy[1])
 		print(accuracy[1])
+		model.save(str(team[0][0]) + "-model.h5")
 	train_plots = np.array(train_plots)
+	plt.figure(1)
 	for plot in train_plots:
 		plt.plot(plot[1:])
 	plt.legend(train_plots[:, 0], loc='upper left')
-	plt.title('Model accuracy')
+	plt.title('Training Accuracy by Team')
 	plt.ylabel('Accuracy')
 	plt.xlabel('Epoch')
+
+	plt.figure(2)
+	plt.bar(np.arange(32), test_plots, align='center', alpha=0.5)
+	plt.xticks(np.arange(32), train_plots[:, 0])
+	plt.ylabel('Accuracy')
+	plt.title('Validation Accuracy per Team')
 
 	plt.show()
