@@ -21,22 +21,21 @@ def get_games(team_id):
 
 
 def get_data(team_id, games_back, include_opponent, games):
-
 	if include_opponent:
-		ret_array = []
+		ret_array = [team_id]
 		for i in range(games_back):
 			if games[i][1] == team_id:
-				ret_array.append([team_id, 1, games[i+1][3], games[i+1][4]])
+				ret_array.extend([1, games[i+1][3], games[i+1][4]])
 			else:
-				ret_array.append([team_id, 0, games[i+1][4], games[i+1][3]])
+				ret_array.extend([0, games[i+1][4], games[i+1][3]])
 		return np.array(ret_array)
 	else:
-		ret_array = []
+		ret_array = [team_id]
 		for i in range(games_back):
 			if games[i][1] == team_id:
-				ret_array.append([team_id, 1, games[i+1][3]])
+				ret_array.extend([1, games[i+1][3]])
 			else:
-				ret_array.append([team_id, 0, games[i+1][4]])
+				ret_array.extend([0, games[i+1][4]])
 
 		return np.array(ret_array)
 
@@ -44,9 +43,9 @@ def get_data(team_id, games_back, include_opponent, games):
 def get_all_data(team_id, include_opponent, games_back):
 	ret_array = []
 	games = get_games(team_id)
-	# Getting all the games save for the last one since there is no game before the first one
-	while games.shape[0] > 1:
-		ret_array.extend(get_data(team_id, games_back, include_opponent, games))
+	# because the network needs a consistent input, if there isn't enough games to fill it completely it is left out
+	while games.shape[0] > games_back:
+		ret_array.append(get_data(team_id, games_back, include_opponent, games))
 		games = games[games_back:]
 	return np.array(ret_array)
 
@@ -79,15 +78,15 @@ def test(data, network):
 
 
 if __name__ == '__main__':
-	data_all = get_all_teams(1, False)
+	data_all = get_all_teams(5, False)
 	train_plots = []
-	test_plots =[]
+	test_plots = []
 	for team in data_all:
 		train_data, test_data = split(team)
 
 		model = Sequential()
 
-		model.add(Dense(10, activation='tanh', input_dim=1, kernel_initializer='uniform'))
+		model.add(Dense(10, activation='tanh', input_dim=9, kernel_initializer='uniform'))
 		model.add(Dropout(0.35))
 
 		model.add(Dense(8, activation='tanh', kernel_initializer='uniform'))
