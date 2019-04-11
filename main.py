@@ -78,20 +78,20 @@ def test(data, network):
 
 
 if __name__ == '__main__':
-	data_all = get_all_teams(16, False)
+	data_all = get_all_teams(1, True)
 	train_plots = []
 	test_plots = []
 	train_data, test_data = split(data_all)
 
 	model = Sequential()
 
-	model.add(Dense(30, activation='tanh', input_dim=31, kernel_initializer='uniform'))
+	model.add(Dense(30, activation='sigmoid', input_dim=2, kernel_initializer='uniform'))
 	model.add(Dropout(0.35))
 
-	model.add(Dense(30, activation='tanh', kernel_initializer='uniform'))
+	model.add(Dense(30, activation='sigmoid', kernel_initializer='uniform'))
 	model.add(Dropout(0.35))
 
-	model.add(Dense(1, activation='tanh', kernel_initializer='uniform'))
+	model.add(Dense(1, activation='sigmoid', kernel_initializer='uniform'))
 
 	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
