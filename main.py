@@ -53,7 +53,7 @@ def get_all_data(team_id, include_opponent, games_back):
 def get_all_teams(games_back, include_opponent):
 	ret_array = []
 	for i in range(1, 33):
-		ret_array.append(get_all_data(i, include_opponent, games_back))
+		ret_array.extend(get_all_data(i, include_opponent, games_back))
 	return np.array(ret_array)
 
 
@@ -78,48 +78,32 @@ def test(data, network):
 
 
 if __name__ == '__main__':
-	data_all = get_all_teams(5, False)
+	data_all = get_all_teams(16, False)
 	train_plots = []
 	test_plots = []
-	for team in data_all:
-		train_data, test_data = split(team)
+	train_data, test_data = split(data_all)
 
-		model = Sequential()
+	model = Sequential()
 
-		model.add(Dense(10, activation='tanh', input_dim=9, kernel_initializer='uniform'))
-		model.add(Dropout(0.35))
+	model.add(Dense(30, activation='tanh', input_dim=31, kernel_initializer='uniform'))
+	model.add(Dropout(0.35))
 
-		model.add(Dense(8, activation='tanh', kernel_initializer='uniform'))
-		model.add(Dropout(0.35))
+	model.add(Dense(30, activation='tanh', kernel_initializer='uniform'))
+	model.add(Dropout(0.35))
 
-		model.add(Dense(1, activation='tanh', kernel_initializer='uniform'))
+	model.add(Dense(1, activation='tanh', kernel_initializer='uniform'))
 
-		model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
+	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
-		history = train(train_data, model, 1)
+	history = train(train_data, model, 1)
 
-		accuracy = test(test_data, model)
-
-		# plot_model(model)
-		temp = [float(team[0][0])]
-		temp.extend(history.history["acc"])
-		train_plots.append(temp)
-		test_plots.append(accuracy[1])
-		print(accuracy[1])
-		model.save(str(team[0][0]) + "-model.h5")
+	accuracy = test(test_data, model)
+	print(accuracy[1])
+	model.save("all-model.h5")
 	train_plots = np.array(train_plots)
-	plt.figure(1)
-	for plot in train_plots:
-		plt.plot(plot[1:])
-	plt.legend(train_plots[:, 0], loc='upper left')
-	plt.title('Training Accuracy by Team')
+	plt.plot(history.history["acc"])
+	plt.title('Training Accuracy')
 	plt.ylabel('Accuracy')
 	plt.xlabel('Epoch')
-
-	plt.figure(2)
-	plt.bar(np.arange(32), test_plots, align='center', alpha=0.5)
-	plt.xticks(np.arange(32), train_plots[:, 0])
-	plt.ylabel('Accuracy')
-	plt.title('Validation Accuracy per Team')
 
 	plt.show()
