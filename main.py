@@ -66,7 +66,7 @@ def train(data, network, v):
 
 	labels = data[:, 1].reshape(-1, 1)
 
-	return network.fit(data[:, 2:], labels, epochs=250, batch_size=100, verbose=v)
+	return network.fit(data[:, 2:], labels, epochs=1000, batch_size=100, verbose=v)
 
 
 def test(data, network):
@@ -86,13 +86,13 @@ if __name__ == '__main__':
 
 		model = Sequential()
 
-		model.add(Dense(10, activation='tanh', input_dim=14, kernel_initializer='uniform'))
+		model.add(Dense(10, activation='sigmoid', input_dim=14, kernel_initializer='uniform'))
 		model.add(Dropout(0.35))
 
-		model.add(Dense(8, activation='tanh', kernel_initializer='uniform'))
+		model.add(Dense(8, activation='sigmoid', kernel_initializer='uniform'))
 		model.add(Dropout(0.35))
 
-		model.add(Dense(1, activation='tanh', kernel_initializer='uniform'))
+		model.add(Dense(1, activation='sigmoid', kernel_initializer='uniform'))
 
 		model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
