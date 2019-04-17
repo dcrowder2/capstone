@@ -2,7 +2,6 @@ import tensorflow
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
-from keras.utils import plot_model
 import sqlite3
 import matplotlib.pyplot as plt
 
@@ -66,7 +65,7 @@ def train(data, network, v):
 
 	labels = data[:, 1].reshape(-1, 1)
 
-	return network.fit(data[:, 2:], labels, epochs=1000, batch_size=100, verbose=v)
+	return network.fit(data[:, 2:], labels, epochs=300, batch_size=100, verbose=v)
 
 
 def test(data, network):
@@ -78,14 +77,14 @@ def test(data, network):
 
 
 if __name__ == '__main__':
-	data_all = get_all_teams(1, True)
+	data_all = get_all_teams(16, True)
 	train_plots = []
 	test_plots = []
 	train_data, test_data = split(data_all)
 
 	model = Sequential()
 
-	model.add(Dense(30, activation='sigmoid', input_dim=2, kernel_initializer='uniform'))
+	model.add(Dense(30, activation='sigmoid', input_dim=47, kernel_initializer='uniform'))
 	model.add(Dropout(0.35))
 
 	model.add(Dense(30, activation='sigmoid', kernel_initializer='uniform'))
